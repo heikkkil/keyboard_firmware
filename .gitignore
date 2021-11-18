@@ -50,3 +50,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# excluded directories
+./2_7_bcm/bin/
+
