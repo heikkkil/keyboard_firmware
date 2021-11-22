@@ -51,7 +51,7 @@ void  Handler(int signo)
     exit(0);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
     //static int current_pic_num = 0;
     printf("2.7inch e-Paper B(C) demo\r\n");
@@ -79,41 +79,13 @@ int main(void)
     Paint_NewImage(BlackImage, EPD_WIDTH, EPD_HEIGHT, 270, WHITE);
     Paint_NewImage(RedImage, EPD_WIDTH, EPD_HEIGHT, 270, WHITE);
     
+    //printf("argv[0]: %s argv[1]:%s\n",argv[0], argv[1] );
     // paint an image from the pic folder
     Paint_SelectImage(BlackImage);
     Paint_Clear(WHITE);
-    GUI_ReadBmp("./pic/100x10.bmp", 0, 0);
+    GUI_ReadBmp(argv[1], 0, 0);
     EPD_Display_Black(BlackImage,BlackImage);
 
-    Paint_SelectImage(BlackImage);
-    Paint_Clear(WHITE);
-    GUI_ReadBmp("./pic/En/A.bmp", 0, 0);
-    EPD_Display_Black(BlackImage, RedImage);
-    
-    // Button press 
-     int button_stat = 0;
-    while(1)
-    {
-       button_stat = block_for_button();
-        switch(button_stat)
-        {
-            case 1:
-            //Paint_NewImage(BlackImage, EPD_WIDTH, EPD_HEIGHT, 270, WHITE);
-            //Paint_NewImage(RedImage, EPD_WIDTH, EPD_HEIGHT, 270, WHITE);
-            printf("KEY 1 PRESSED!!!\r\n");
-            Paint_SelectImage(BlackImage);
-            Paint_Clear(WHITE);
-            GUI_ReadBmp("./pic/En/;.bmp", 130, 0);
-            GUI_ReadBmp("./pic/key_seperater.bmp", 60, 0);
-            GUI_ReadBmp("./pic/En/@.bmp", 0, 0);
-            EPD_Display_Black(BlackImage,BlackImage);
-            break;
-            case 2:
-            printf("KEY 2 PRESSED!!!\r\n");
-            break;
-        }
-        
-    }
 
 
     return 0;
