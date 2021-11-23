@@ -42,10 +42,10 @@ def update_key(img_path):
     # Print each found image into its correspoding display
     images = next(walk(img_path), (None, None, []))[2]
     for img in images:
-        try
+        try:
             if keys[img]:
             # here we would select the correct key, but we got only one key.
-            cmd=f"{exe} {img}"
+                cmd=f"{exe} {img}"
         except KeyError:
             continue
     try:
