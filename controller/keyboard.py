@@ -71,31 +71,30 @@ if __name__ == "__main__":
     # Configure button1
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(SW1,GPIO.IN)
-
-    # Read UART for languge code base_lang
-    try:
-        rxd = UART.read()
-        img = get_img(rxd)
-        if img != "":
-            update_key(img)
-    # Error
-    except SerialException as e:
-        print("Error: Serial could not read.")
-        print(e)
-        print("Exit.")
-        sys.exit()
-    #TODO test if serial flushing is needed as "finally"
-
-    # Poll switch 1, here we would listen to or poll the whole matrix, but no.
-    try:
-        while True:
-            for key in keys:
+    while True:
+        # Read UART for languge code base_lang
+        try:
+            rxd = UART.read()
+            img = get_img(rxd)
+            if img != "":
+                update_key(img)
+        # Error
+        except SerialException as e:
+            print("Error: Serial could not read.")
+            print(e)
+            print("Exit.")
+            break
+        #TODO test if serial flushing is needed as "finally"
+        # Here we would listen to or poll the whole matrix, but now just one.
+        for key in keys:
+            try:
                 if GPIO.input(keys[key]):
                     send_key(scancodes[key])
-            sleep(0.1)
-    # Error
-    except Exception as e:
-        print(f"Error: GPIO {SW1} could not be read.")
-        print(e)
-        print("Exit.")
-        sys.exit()
+            # Error
+            except Exception as e:
+                print(f"Error: GPIO {SW1} could not be read.")
+                print(e)
+                print("Exit.")
+                break
+        sleep(0.1)
+    sys.exit()
