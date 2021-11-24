@@ -63,22 +63,16 @@
  * GPIO config
 **/
 
-#define EPD_RST_PIN     13
-#define EPD_DC_PIN      6
-#define EPD_CS_PIN      5
+#define EPD_RST_PIN    13
+//#define EPD_DC_PIN     6
+//#define EPD_CS_PIN      5
 #define EPD_BUSY_PIN    19
-
-/*
-#define EPD_RST_PIN     11
-#define EPD_DC_PIN      22
-#define EPD_CS_PIN      24
-#define EPD_BUSY_PIN    18
-
-*/
 
 #define KEY1_PIN        21
 #define KEY2_PIN        20
 
+extern int EPD_DC_PIN;
+extern int EPD_CS_PIN;
 
 /**
  * GPIO read and write
@@ -100,7 +94,5 @@
 UBYTE DEV_ModuleInit(void);
 void DEV_ModuleExit(void);
 
-
-int block_for_button(void);
 
 #endif

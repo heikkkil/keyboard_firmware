@@ -36,7 +36,30 @@
 #include "GUI_BMPfile.h"
 #include "EPD_2in7b.h"
 
-    UBYTE *BlackImage, *RedImage;
+UBYTE *BlackImage, *RedImage;
+
+
+int EPD_DC_PIN = 6;
+int EPD_CS_PIN = 5;
+
+//changing pins for diffrent displays
+void setPinsAccToElinkId(int eLinkId)
+{
+    if (eLinkId == 1)
+    {
+        printf("here1 ");
+        EPD_DC_PIN = 6;
+        EPD_CS_PIN = 5;
+    }
+
+    if (eLinkId == 2)
+    {
+        printf("here2");
+        EPD_DC_PIN = 6;
+        EPD_CS_PIN = 5;
+    }
+
+}
 
 void  Handler(int signo)
 {
@@ -51,20 +74,18 @@ void  Handler(int signo)
     exit(0);
 }
 
-int main(int argc, char **argv)
-{
-    //static int current_pic_num = 0;
+void start(){
+//static int current_pic_num = 0;
     printf("2.7inch e-Paper B(C) demo\r\n");
-    DEV_ModuleInit();
+    DEV_ModuleInit(); //sth
 
     // Exception handling:ctrl + c
     signal(SIGINT, Handler);
     
-
     if(EPD_Init() != 0) {
         printf("e-Paper init failed\r\n");
     }
-    EPD_Clear();
+    //EPD_Clear();
     DEV_Delay_ms(500);
     //Create a new image cache named IMAGE_BW and fill it with white
     UWORD Imagesize = ((EPD_WIDTH % 8 == 0)? (EPD_WIDTH / 8 ): (EPD_WIDTH / 8 + 1)) * EPD_HEIGHT;
@@ -78,14 +99,23 @@ int main(int argc, char **argv)
     }
     Paint_NewImage(BlackImage, EPD_WIDTH, EPD_HEIGHT, 270, WHITE);
     Paint_NewImage(RedImage, EPD_WIDTH, EPD_HEIGHT, 270, WHITE);
-    
-    //printf("argv[0]: %s argv[1]:%s\n",argv[0], argv[1] );
-    // paint an image from the pic folder
-    Paint_SelectImage(BlackImage);
-    Paint_Clear(WHITE);
-    GUI_ReadBmp(argv[1], 0, 0);
-    EPD_Display_Black(BlackImage,BlackImage);
 
+}
+
+int main(int argc, char **argv)
+{
+    int elinkId[] = {1,2};
+    
+    for(int i = 0; i <sizeof(elinkId)/sizeof(int);i++){
+        setPinsAccToElinkId(elinkId[i]);
+        start();
+        printf("argv[0]: %s argv[1]:%s\n",argv[0], argv[1] );
+        // paint an image from the pic folder if image is invalid the old one remains
+        Paint_SelectImage(BlackImage);
+        Paint_Clear(WHITE);
+        GUI_ReadBmp(argv[i+1], 0, 0);
+        EPD_Display_Black(BlackImage,BlackImage);
+    }
 
 
     return 0;
