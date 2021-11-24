@@ -29,7 +29,7 @@ def get_img(lang_code):
     base = tok[0]
     lang = tok[1]
     img_path = ""
-    if path.isdir(base) and path.isdir(lang):
+    if path.isdir(f"{root}/{base}") and path.isdir(f"{root}/{base}/{lang}"):
         # absolute path must be provided for os.walk later on
         img_path = f"{root}/{base}/{lang}"
     else:
