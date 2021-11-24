@@ -60,7 +60,7 @@ def update_key(img_path):
 def send_key(scancode):
     try:
         UART.write(scancode)
-    except SerialException as e:
+    except serial.SerialException as e:
         print("Error: Could not send to serial.")
         print(e)
         print("Exit.")
@@ -79,7 +79,7 @@ if __name__ == "__main__":
             if img != "":
                 update_key(img)
         # Error
-        except SerialException as e:
+        except serial.SerialException as e:
             print("Error: Serial could not read.")
             print(e)
             print("Exit.")
