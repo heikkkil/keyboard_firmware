@@ -85,7 +85,7 @@ void start(){
     if(EPD_Init() != 0) {
         printf("e-Paper init failed\r\n");
     }
-    //EPD_Clear();
+    EPD_Clear();
     DEV_Delay_ms(500);
     //Create a new image cache named IMAGE_BW and fill it with white
     UWORD Imagesize = ((EPD_WIDTH % 8 == 0)? (EPD_WIDTH / 8 ): (EPD_WIDTH / 8 + 1)) * EPD_HEIGHT;
