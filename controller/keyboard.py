@@ -46,7 +46,7 @@ def update_key(img_path):
         try:
             if keys[i]:
             # here we would select the correct key, but we got only one key.
-                cmd=f"{exe} {img}"
+                cmd=f"{exe} {i}"
         except KeyError:
             continue
     try:
