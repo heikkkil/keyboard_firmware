@@ -1,7 +1,7 @@
 # Keyboard demo
 
 import sys
-from subprocess import Popen
+import subprocess
 from time import sleep
 from os import path
 from os import walk
@@ -49,7 +49,7 @@ def update_key(img_path):
         except KeyError:
             continue
     try:
-        Popen(["/bin/bash", cmd])
+        subprocess.Popen(["/bin/bash", cmd])
     except subprocess.CalledProcessError as e:
         print("Error: Could not update key subprocess popen.")
         print(e)
