@@ -16,8 +16,9 @@ keys = {\
         "KEY_OEM_3":SW1,\
         "KEY_LSHIFT":SW2\
         }
+# key scancodes [down,up]
 scancodes = {\
-        "KEY_OEM_3":"\x00\x33" #TODO real code
+        "KEY_OEM_3":["\x00\x33","\x00\x00"] #TODO real code
         }
 # UART device (RDX = GPIO 14, TDX = GPIO 15)
 UART = serial.Serial("/dev/ttyS0", 9600)
@@ -71,6 +72,8 @@ if __name__ == "__main__":
     # Configure button1
     GPIO.setmode(GPIO.BOARD)
     GPIO.setup(SW1,GPIO.IN)
+    # demo specific flag for key status
+    DOWN = False
     while True:
         # Read UART for languge code base_lang
         try:
@@ -86,10 +89,16 @@ if __name__ == "__main__":
             break
         #TODO test if serial flushing is needed as "finally"
         # Here we would listen to or poll the whole matrix, but now just one.
+        # TODO change to edge detection
         for key in keys:
             try:
                 if GPIO.input(keys[key]):
-                    send_key(scancodes[key])
+                    send_key(scancodes[key][0])
+                    DOWN = True
+                else:
+                    if DOWN:
+                        send_key(scancodes[key][1])
+                        DOWN = False
             # Error
             except Exception as e:
                 print(f"Error: GPIO {SW1} could not be read.")
