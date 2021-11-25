@@ -39,23 +39,29 @@ def get_img(lang_code):
 
 # Draw key character image into e-ink with subprocess
 def update_key(img_path):
-    exe="/home/pi/keyboard_firmware/bin/edp.exe"
+    exe="/home/pi/keyboard_firmware/epd.exe"
+    cmd="echo error"
     # Print each found image into its correspoding display
     images = next(walk(img_path), (None, None, []))[2]
+    print(images)
     for i in images:
-        try:
-            if keys[i]:
-            # here we would select the correct key, but we got only one key.
-                cmd=f"{exe} {i}"
-        except KeyError:
+       iname=i.split(".")[0]
+       try:
+            if keys[iname]:
+                # here we would select the correct key, but we got only one key.
+                args=f"{img_path}/{i}"
+                print(cmd)
+                try:
+                    subprocess.Popen([exe, args])
+                except subprocess.CalledProcessError as e:
+                    print("Error: Could not update key subprocess popen.")
+                    print(e)
+                    print("Exit.")
+                    sys.exit()
+            else:
+                continue
+       except KeyError:
             continue
-    try:
-        subprocess.Popen(["/bin/bash", cmd])
-    except subprocess.CalledProcessError as e:
-        print("Error: Could not update key subprocess popen.")
-        print(e)
-        print("Exit.")
-        sys.exit()
 
 # Send switch event with keycode to host with UART
 def send_key(scancode):
@@ -107,3 +113,4 @@ if __name__ == "__main__":
                 break
         sleep(0.1)
     sys.exit()
+
