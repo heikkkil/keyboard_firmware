@@ -52,7 +52,8 @@ def update_key(img_path):
                 args=f"{img_path}/{i}"
                 print(cmd)
                 try:
-                    subprocess.Popen([exe, args])
+                    p = subprocess.Popen([exe, args], stdin=subprocess.DEVNULL)
+                    stdout,stderr = p.communicate()
                 except subprocess.CalledProcessError as e:
                     print("Error: Could not update key subprocess popen.")
                     print(e)
