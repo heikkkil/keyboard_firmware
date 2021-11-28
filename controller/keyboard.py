@@ -14,11 +14,10 @@ SW2 = "20"
 # scancode assignments (https://kbdlayout.info/KBDFI/scancodes finnish layout)
 keys = {\
         "KEY_OEM_3":SW1,\
-        "KEY_LSHIFT":SW2\
         }
 # key scancodes [down,up]
 scancodes = {\
-        "KEY_OEM_3":["\x00\x33","\x00\x00"] #TODO real code
+        "KEY_OEM_3":["\x00\x33","\x00\x44"] #TODO placeholder codes
         }
 # UART device (RDX = GPIO 14, TDX = GPIO 15)
 UART = serial.Serial("/dev/ttyS0", 9600)
@@ -40,17 +39,17 @@ def get_img(lang_code):
 # Draw key character image into e-ink with subprocess
 def update_key(img_path):
     exe="/home/pi/keyboard_firmware/epd.exe"
-    cmd="echo error"
     # Print each found image into its correspoding display
     images = next(walk(img_path), (None, None, []))[2]
-    print(images)
     for i in images:
-       iname=i.split(".")[0]
-       try:
+        # Strip filename suffix
+        iname=i.split(".")[0]
+        try:
+            # Check for existence
             if keys[iname]:
-                # here we would select the correct key, but we got only one key.
+                # here we would select the correct key, but
+                # we got only one key.
                 args=f"{img_path}/{i}"
-                print(cmd)
                 try:
                     p = subprocess.Popen([exe, args], stdin=subprocess.DEVNULL)
                     stdout,stderr = p.communicate()
@@ -61,30 +60,43 @@ def update_key(img_path):
                     sys.exit()
             else:
                 continue
-       except KeyError:
+        except KeyError:
             continue
 
-# Send switch event with keycode to host with UART
-def send_key(scancode):
+# Switch down callback
+def send_key_down(channel):
+    # Demo hardcoded for SW1
     try:
-        UART.write(scancode)
+        UART.write(scancodes["KEY_OEM_3"][0].encode())
     except serial.SerialException as e:
-        print("Error: Could not send to serial.")
+        print(f"Error: Couldn't send {scancodes['KEY_OEM_3'][0]} to UART")
         print(e)
         print("Exit.")
         sys.exit()
 
-# Prioritize key image update over transmission
+# Switch up callback
+def send_key_up():
+    # Demo hardcoded for SW1
+    try:
+        UART.write(scancodes["KEY_OEM_3"][1].encode())
+    except serial.SerialException as e:
+        print(f"Error: Couldn't send {scancodes['KEY_OEM_3'][0]} to UART")
+        print(e)
+        print("Exit.")
+        sys.exit()
+
 if __name__ == "__main__":
-    # Configure button1
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(SW1,GPIO.IN)
-    # demo specific flag for key status
-    DOWN = False
+    # Configure SW1 as BCM input with default pull low
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(SW1,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
+    # Configure callback for button press
+    GPIO.add_event_detect(10,GPIO.RISING,callback=send_key_down, bouncetime=200)
+    # Main loop
     while True:
-        # Read UART for languge code base_lang
+        # Read UART for language code <base>_<lang>
         try:
-            rxd = UART.read()
+            rxd = str(UART.read().decode())
             img = get_img(rxd)
             if img != "":
                 update_key(img)
@@ -94,24 +106,15 @@ if __name__ == "__main__":
             print(e)
             print("Exit.")
             break
-        #TODO test if serial flushing is needed as "finally"
-        # Here we would listen to or poll the whole matrix, but now just one.
-        # TODO change to edge detection
-        for key in keys:
-            try:
-                if GPIO.input(keys[key]):
-                    send_key(scancodes[key][0])
-                    DOWN = True
-                else:
-                    if DOWN:
-                        send_key(scancodes[key][1])
-                        DOWN = False
-            # Error
-            except Exception as e:
-                print(f"Error: GPIO {SW1} could not be read.")
-                print(e)
-                print("Exit.")
-                break
+        # Check for sw1 falling edge (demo, otherwise full matrix)
+        try:
+            GPIO.wait_for_edge(SW1, GPIO.FALLING)
+            send_key_up()
+        # User exit
+        except KeyboardInterrupt:
+            print("Exit from signal")
+            break
         sleep(0.1)
+    # Clean up
+    GPIO.cleanup()
     sys.exit()
-
