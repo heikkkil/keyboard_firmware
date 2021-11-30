@@ -24,15 +24,15 @@ UART = serial.Serial("/dev/ttyS0", 9600)
 # Lookup and return drawable image path for language code
 def get_img(lang_code):
     tok = str(lang_code).split("_")
-    root = "/home/pi/keyboard_firmware/pic"
-    base = tok[0]
-    lang = tok[1]
+    root = "/home/pi/keyboard_firmware/e-ink/pic"
+    base = tok[0].strip()
+    lang = tok[1].strip()
     img_path = ""
-    if path.isdir(f"{root}/{base}") and path.isdir(f"{root}/{base}/{lang}"):
+    if path.isdir(f"{root}/{base}/{lang}"):
         # absolute path must be provided for os.walk later on
         img_path = f"{root}/{base}/{lang}"
     else:
-        print("Error: unresolved lang_code {lang_code}")
+        print(f"Error: unresolved lang_code {lang_code}")
     return img_path
 
 # Draw key character image into e-ink with subprocess
