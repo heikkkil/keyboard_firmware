@@ -72,7 +72,7 @@ def send_key(scancode):
         sys.exit()
 
 # Switch up callback hardcoded for SW1
-def sw_callback():
+def sw_callback(channel):
     if GPIO.input(SW1):
         # Switch down
         send_key(scancodes["KEY_OEM_3"][1].encode())
