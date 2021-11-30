@@ -104,6 +104,8 @@ void start(){
 
 int main(int argc, char **argv)
 {
+   /* 
+    //  for changing the e-inks. For future development when multiple keys
     int elinkId[] = {1,2};
     
     for(int i = 0; i <sizeof(elinkId)/sizeof(int);i++){
@@ -115,7 +117,19 @@ int main(int argc, char **argv)
         Paint_Clear(WHITE);
         GUI_ReadBmp(argv[i+1], 0, 0);
         EPD_Display_Black(BlackImage,BlackImage);
-    }
+    }*/
+
+    //display key. 
+    int elinkId = 1;
+    setPinsAccToElinkId(elinkId);
+    start();
+    printf("argv[0]: %s argv[1]:%s\n",argv[0], argv[1] );
+    // paint an image from the pic folder if image is invalid the old one remains
+    Paint_SelectImage(BlackImage);
+    Paint_Clear(WHITE);
+    GUI_ReadBmp(argv[elinkId], 0, 0);
+    EPD_Display_Black(BlackImage,BlackImage);
+
 
 
     return 0;
