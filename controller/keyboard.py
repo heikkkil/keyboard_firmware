@@ -62,27 +62,23 @@ def update_key(img_path):
         except KeyError:
             continue
 
-# Switch down callback
-def send_key_down(channel):
-    # Demo hardcoded for SW1
+def send_key(scancode):
     try:
-        UART.write(scancodes["KEY_OEM_3"][0].encode())
+        UART.write(scancode)
     except serial.SerialException as e:
-        print(f"Error: Couldn't send {scancodes['KEY_OEM_3'][0]} to UART")
+        print(f"Error: Couldn't send {scancode} to UART")
         print(e)
-        print("Exit.")
+        GPIO.cleanup()
         sys.exit()
 
-# Switch up callback
-def send_key_up():
-    # Demo hardcoded for SW1
-    try:
-        UART.write(scancodes["KEY_OEM_3"][1].encode())
-    except serial.SerialException as e:
-        print(f"Error: Couldn't send {scancodes['KEY_OEM_3'][0]} to UART")
-        print(e)
-        print("Exit.")
-        sys.exit()
+# Switch up callback hardcoded for SW1
+def sw_callback():
+    if GPIO.input(SW1):
+        # Switch down
+        send_key(scancodes["KEY_OEM_3"][1].encode())
+    else:
+        # Switch up
+        send_key(scancodes["KEY_OEM_3"][1].encode()))
 
 if __name__ == "__main__":
     # Configure SW1 as BCM input with default pull low
@@ -90,7 +86,7 @@ if __name__ == "__main__":
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(SW1,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
     # Configure callback for button press
-    GPIO.add_event_detect(SW1,GPIO.RISING,callback=send_key_down, bouncetime=200)
+    GPIO.add_event_detect(SW1,GPIO.RISING,callback=sw_callback, bouncetime=200)
     # Main loop
     while True:
         # Read UART for language code <base>_<lang>
@@ -105,15 +101,11 @@ if __name__ == "__main__":
             print(e)
             print("Exit.")
             break
-        # Check for sw1 falling edge (demo, otherwise full matrix)
+        # Manual exit
         try:
-            GPIO.wait_for_edge(SW1, GPIO.FALLING)
-            send_key_up()
-        # User exit
+            sleep(0.1)
         except KeyboardInterrupt:
-            print("Exit from signal")
             break
-        sleep(0.1)
     # Clean up
     GPIO.cleanup()
     sys.exit()
