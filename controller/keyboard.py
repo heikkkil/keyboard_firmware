@@ -78,7 +78,7 @@ def sw_callback():
         send_key(scancodes["KEY_OEM_3"][1].encode())
     else:
         # Switch up
-        send_key(scancodes["KEY_OEM_3"][1].encode()))
+        send_key(scancodes["KEY_OEM_3"][1].encode())
 
 if __name__ == "__main__":
     # Configure SW1 as BCM input with default pull low
