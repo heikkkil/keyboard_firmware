@@ -90,7 +90,7 @@ if __name__ == "__main__":
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(SW1,GPIO.IN,pull_up_down=GPIO.PUD_DOWN)
     # Configure callback for button press
-    GPIO.add_event_detect(10,GPIO.RISING,callback=send_key_down, bouncetime=200)
+    GPIO.add_event_detect(SW1,GPIO.RISING,callback=send_key_down, bouncetime=200)
     # Main loop
     while True:
         # Read UART for language code <base>_<lang>
