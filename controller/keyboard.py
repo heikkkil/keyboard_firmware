@@ -95,7 +95,7 @@ if __name__ == "__main__":
     while True:
         # Read UART for language code <base>_<lang>
         try:
-            rxd = str(UART.read().decode())
+            rxd = str(UART.readline().decode())
             img = get_img(rxd)
             if img != "":
                 update_key(img)
