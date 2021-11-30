@@ -9,8 +9,7 @@ import serial
 import RPi.GPIO as GPIO
 
 # Rpi e-ink hat switch BCM pins
-SW1 = "21"
-SW2 = "20"
+SW1 = 21
 # scancode assignments (https://kbdlayout.info/KBDFI/scancodes finnish layout)
 keys = {\
         "KEY_OEM_3":SW1,\
